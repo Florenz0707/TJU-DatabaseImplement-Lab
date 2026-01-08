@@ -12580,5 +12580,12 @@
   proname => 'vector_send', prorettype => 'bytea', proargtypes => 'vector',
   prosrc => 'vector_send' },
 
+{ oid => '9009', descr => 'hnsw index access method handler',
+  proname => 'hnswhandler', prorettype => 'index_am_handler',
+  proargtypes => 'internal', prosrc => 'hnswhandler' },
+
+{ oid => '9012', descr => 'normalize vector with L2 norm',
+  proname => 'l2_normalize', prorettype => 'vector', proargtypes => 'vector',
+  prosrc => 'l2_normalize' },
 
 ]

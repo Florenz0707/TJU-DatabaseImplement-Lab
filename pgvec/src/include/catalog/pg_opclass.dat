@@ -488,4 +488,8 @@
 
 # no brin opclass for the geometric types except box
 
+{ opcmethod => 'hnsw', opcname => 'vector_l2_ops',
+  opcfamily => 'hnsw/vector_l2_family', opcintype => 'vector',
+  opcdefault => 't', opckeytype => 'vector' },
+
 ]

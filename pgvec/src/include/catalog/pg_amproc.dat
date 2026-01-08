@@ -2024,4 +2024,8 @@
 { amprocfamily => 'brin/box_inclusion_ops', amproclefttype => 'box',
   amprocrighttype => 'box', amprocnum => '13', amproc => 'box_contain' },
 
+# vector
+{ amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'vector',
+  amprocrighttype => 'vector', amprocnum => '1', amproc => 'vector_l2_distance' }, 
+   
 ]
