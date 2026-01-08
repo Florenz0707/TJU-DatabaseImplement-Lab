@@ -695,4 +695,11 @@
   typreceive => 'brin_minmax_multi_summary_recv',
   typsend => 'brin_minmax_multi_summary_send', typalign => 'i',
   typstorage => 'x', typcollation => 'default' },
+
+{ oid => '9002', descr => 'vector data type',
+  typname => 'vector', typlen => '-1', typbyval => 'f', typcategory => 'U',
+  typinput => 'vector_in', typoutput => 'vector_out',
+  typreceive => 'vector_recv', typsend => 'vector_send', typmodin => 'vector_typmod_in',
+  typstorage => 'x', typalign => 'd' },
+
 ]

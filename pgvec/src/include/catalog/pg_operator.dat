@@ -3460,4 +3460,16 @@
   oprcode => 'multirange_after_multirange', oprrest => 'multirangesel',
   oprjoin => 'scalargtjoinsel' },
 
+# L2 Distance Operator <->
+{ oid => '9101', descr => 'vector L2 (Euclidean) distance',
+  oprname => '<->', oprleft => 'vector', oprright => 'vector',
+  oprresult => 'float8', oprcom => '<->(vector,vector)',
+  oprcode => 'vector_l2_distance' },
+
+# Cosine Distance Operator <=>
+{ oid => '9102', descr => 'Cosine distance',
+  oprname => '<=>', oprleft => 'vector', oprright => 'vector',
+  oprresult => 'float8', oprcom => '<=>(vector,vector)',
+  oprcode => 'vector_cosine_distance' },
+
 ]

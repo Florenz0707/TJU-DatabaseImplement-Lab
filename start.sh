@@ -1,12 +1,12 @@
 echo "Activate python virtual env..."
 source ~/dbimpl/.venv/bin/activate
 
-echo "\nMeson setup ..."
+echo "Meson setup ..."
 cd ~/dbimpl/pgvec
 uv run meson setup pgvecbuild --prefix=~/dbimpl/pgvecinstall
-deativate
+deactivate
 
-echo "\nNinja compiling ..."
+echo "Ninja compiling ..."
 cd ~/dbimpl/pgvec/pgvecbuild
 ninja
 ninja install
@@ -16,7 +16,7 @@ if [ -d ~/dbimpl/pgvecinstall/data ]; then
     rm -rf ~/dbimpl/pgvecinstall/data
 fi
 
-echo "\nInitial Database"
+echo "Initial Database"
 ~/dbimpl/pgvecinstall/bin/initdb -D ~/dbimpl/pgvecinstall/data
 ~/dbimpl/pgvecinstall/bin/pg_ctl -D ~/dbimpl/pgvecinstall/data -l logfile start
 ~/dbimpl/pgvecinstall/bin/createdb test

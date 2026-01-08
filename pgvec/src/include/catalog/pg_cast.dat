@@ -560,4 +560,8 @@
 { castsource => 'tstzrange', casttarget => 'tstzmultirange',
   castfunc => 'tstzmultirange(tstzrange)', castcontext => 'e',
   castmethod => 'f' },
+
+# vector
+{ castsource => 'vector', casttarget => 'vector',
+  castfunc => 'vector(vector,int4)', castcontext => 'i', castmethod => 'f' },
 ]

@@ -12547,4 +12547,38 @@
   proargnames => '{pid,io_id,io_generation,state,operation,off,length,target,handle_data_len,raw_result,result,target_desc,f_sync,f_localmem,f_buffered}',
   prosrc => 'pg_get_aios' },
 
+# Vector
+{ oid => '9000', descr => 'I/O',
+  proname => 'vector_in', prorettype => 'vector', proargtypes => 'cstring',
+  prosrc => 'vector_in' },
+
+{ oid => '9001', descr => 'I/O',
+  proname => 'vector_out', prorettype => 'cstring', proargtypes => 'vector',
+  prosrc => 'vector_out' },
+
+{ oid => '9003', descr => 'I/O',
+  proname => 'vector_typmod_in', prorettype => 'int4', proargtypes => '_cstring',
+  prosrc => 'vector_typmod_in' },
+
+{ oid => '9004', descr => 'enforce vector dimensions',
+  proname => 'vector', prorettype => 'vector', proargtypes => 'vector int4',
+  prosrc => 'vector_enforce_dim' },
+
+{ oid => '9005', descr => 'Euclidean distance',
+  proname => 'vector_l2_distance', prorettype => 'float8', proargtypes => 'vector vector',
+  prosrc => 'vector_l2_distance' },
+
+{ oid => '9006', descr => 'Cosine distance',
+  proname => 'vector_cosine_distance', prorettype => 'float8', proargtypes => 'vector vector',
+  prosrc => 'vector_cosine_distance' },
+
+{ oid => '9007', descr => 'binary I/O',
+  proname => 'vector_recv', prorettype => 'vector', proargtypes => 'internal oid int4',
+  prosrc => 'vector_recv' },
+  
+{ oid => '9008', descr => 'binary I/O',
+  proname => 'vector_send', prorettype => 'bytea', proargtypes => 'vector',
+  prosrc => 'vector_send' },
+
+
 ]
