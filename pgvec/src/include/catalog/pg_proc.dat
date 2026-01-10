@@ -12547,7 +12547,6 @@
   proargnames => '{pid,io_id,io_generation,state,operation,off,length,target,handle_data_len,raw_result,result,target_desc,f_sync,f_localmem,f_buffered}',
   prosrc => 'pg_get_aios' },
 
-# Vector
 { oid => '9000', descr => 'I/O',
   proname => 'vector_in', prorettype => 'vector', proargtypes => 'cstring',
   prosrc => 'vector_in' },
@@ -12587,5 +12586,25 @@
 { oid => '9012', descr => 'normalize vector with L2 norm',
   proname => 'l2_normalize', prorettype => 'vector', proargtypes => 'vector',
   prosrc => 'l2_normalize' },
+
+{ oid => '9013', descr => 'HNSW index scan start',
+  proname => 'hnswbeginscan', prorettype => 'void', proargtypes => 'oid int4',
+  prosrc => 'hnswbeginscan' },
+
+{ oid => '9014', descr => 'HNSW index get tuple',
+  proname => 'hnswgettuple', prorettype => 'bool', proargtypes => 'void int4',
+  prosrc => 'hnswgettuple' },
+
+{ oid => '9015', descr => 'HNSW index scan end',
+  proname => 'hnswendscan', prorettype => 'void', proargtypes => 'void',
+  prosrc => 'hnswendscan' },
+
+{ oid => '9016', descr => 'HNSW index build',
+  proname => 'hnswbuild', prorettype => 'void', proargtypes => 'oid oid',
+  prosrc => 'hnswbuild' },
+
+{ oid => '9017', descr => 'HNSW index cost estimate',
+  proname => 'hnswcostestimate', prorettype => 'void', proargtypes => 'void void',
+  prosrc => 'hnswcostestimate' },
 
 ]

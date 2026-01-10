@@ -15,4 +15,3 @@ subdir('table')
 subdir('tablesample')
 subdir('transam')
 subdir('hnsw')
-

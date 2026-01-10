@@ -2024,8 +2024,16 @@
 { amprocfamily => 'brin/box_inclusion_ops', amproclefttype => 'box',
   amprocrighttype => 'box', amprocnum => '13', amproc => 'box_contain' },
 
-# vector
 { amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'vector',
-  amprocrighttype => 'vector', amprocnum => '1', amproc => 'vector_l2_distance' }, 
-   
+  amprocrighttype => 'vector', amprocnum => '1', amproc => 'vector_l2_distance' },
+{ amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'void',
+  amprocrighttype => 'void', amprocnum => '2', amproc => 'hnswbuild' },
+{ amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'void',
+  amprocrighttype => 'void', amprocnum => '3', amproc => 'hnswbeginscan' },
+{ amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'void',
+  amprocrighttype => 'void', amprocnum => '4', amproc => 'hnswgettuple' },
+{ amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'void',
+  amprocrighttype => 'void', amprocnum => '5', amproc => 'hnswendscan' },
+{ amprocfamily => 'hnsw/vector_l2_family', amproclefttype => 'void',
+  amprocrighttype => 'void', amprocnum => '6', amproc => 'hnswcostestimate' },
 ]

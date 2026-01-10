@@ -519,6 +519,8 @@
   castcontext => 'i', castmethod => 'f' },
 { castsource => 'numeric', casttarget => 'numeric',
   castfunc => 'numeric(numeric,int4)', castcontext => 'i', castmethod => 'f' },
+{ castsource => 'vector', casttarget => 'vector',
+  castfunc => 'vector(vector,int4)', castcontext => 'i', castmethod => 'f' },
 
 # json to/from jsonb
 { castsource => 'json', casttarget => 'jsonb', castfunc => '0',
@@ -560,8 +562,4 @@
 { castsource => 'tstzrange', casttarget => 'tstzmultirange',
   castfunc => 'tstzmultirange(tstzrange)', castcontext => 'e',
   castmethod => 'f' },
-
-# vector
-{ castsource => 'vector', casttarget => 'vector',
-  castfunc => 'vector(vector,int4)', castcontext => 'i', castmethod => 'f' },
 ]

@@ -7,7 +7,7 @@
 #include "lib/stringinfo.h"
 #include "libpq/pqformat.h"
 #include "varatt.h"
-
+#include "utils/float.h"
 /*
  * Ensure expected dimensions
  */
