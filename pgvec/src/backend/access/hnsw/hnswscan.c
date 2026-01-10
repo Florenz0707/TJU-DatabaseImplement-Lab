@@ -44,7 +44,7 @@ GetScanItems(IndexScanDesc scan, Datum value)
 	/******** 填空开始 ********/
 	for (int lc = entryPoint->level; lc >= 1; lc--)
 	{
-		w = HnswSearchLayer(base, q, ep, 1, lc, index, support, m, false, NULL, &so->v, &so->discarded, false, &so->tuples);
+		w = HnswSearchLayer(base, q, ep, 1, lc, index, support, m, false, NULL, NULL, NULL, true, NULL);
 		ep = w;
 	}
 	/******** 填空结束 ********/
@@ -55,7 +55,7 @@ GetScanItems(IndexScanDesc scan, Datum value)
 	 * 2. 其余参数复用当前函数内的base/q/ep/index/support/m
 	 */
 	/******** 填空开始 ********/
-	return HnswSearchLayer(base, q, ep, hnsw_ef_search, 0, index, support, m, false, NULL, &so->v, &so->discarded, true, &so->tuples);
+	return HnswSearchLayer(base, q, ep, hnsw_ef_search, 0, index, support, m, false, NULL, &so->v, hnsw_iterative_scan != HNSW_ITERATIVE_SCAN_OFF ? &so->discarded : NULL, true, &so->tuples);
 	/******** 填空结束 ********/
 }
 
@@ -72,7 +72,6 @@ ResumeScanItems(IndexScanDesc scan)
 	int batch_size = hnsw_ef_search;
 
 	HnswSearchCandidate *sc;
-	pairingheap_node *w_node;
 
 	if (pairingheap_is_empty(so->discarded))
 		return NIL;
@@ -93,9 +92,7 @@ ResumeScanItems(IndexScanDesc scan)
 		if (pairingheap_is_empty(so->discarded))
 			break;
 
-		w_node = pairingheap_remove_first(so->discarded);
-		sc = HnswGetSearchCandidate(w_node, w_node);
-
+		sc = HnswGetSearchCandidate(w_node, pairingheap_remove_first(so->discarded));
 		ep = lappend(ep, sc);
 	}
 	/******** 填空结束 ********/
@@ -122,14 +119,18 @@ GetScanValue(IndexScanDesc scan)
 	 */
 	/******** 填空开始 ********/
 	if (scan->orderByData->sk_flags & SK_ISNULL)
-	{
 		value = PointerGetDatum(NULL);
-	}
 	else
 	{
 		value = scan->orderByData->sk_argument;
-		Assert(!IS_FLOAT_INF_OR_NAN(DatumGetFloat4(value)));
-		value = HnswNormValue(so->typeInfo, so->support.collation, value);
+
+		/* Value should not be compressed or toasted */
+		Assert(!VARATT_IS_COMPRESSED(DatumGetPointer(value)));
+		Assert(!VARATT_IS_EXTENDED(DatumGetPointer(value)));
+
+		/* Normalize if needed */
+		if (so->support.normprocinfo != NULL)
+			value = HnswNormValue(so->typeInfo, so->support.collation, value);
 	}
 	/******** 填空结束 ********/
 
@@ -141,7 +142,8 @@ GetScanValue(IndexScanDesc scan)
  * Show memory usage
  */
 static void
-ShowMemoryUsage(HnswScanOpaque so){
+ShowMemoryUsage(HnswScanOpaque so)
+{
 	/* 题目5：补全ShowMemoryUsage的完整实现
 	 * 核心提示：
 	 * 1. 功能：打印内存使用量（KB）和已扫描元组数
@@ -162,7 +164,7 @@ ShowMemoryUsage(HnswScanOpaque so){
  * Prepare for an index scan
  */
 IndexScanDesc
-	hnswbeginscan(Relation index, int nkeys, int norderbys)
+hnswbeginscan(Relation index, int nkeys, int norderbys)
 {
 	IndexScanDesc scan;
 	HnswScanOpaque so;
@@ -189,7 +191,7 @@ IndexScanDesc
 									   0,
 									   8 * 1024,
 									   256 * 1024);
-	maxMemory = (double)work_mem * hnsw_scan_mem_multiplier * 1024 + 256;
+	maxMemory = (double)work_mem * hnsw_scan_mem_multiplier * 1024.0 + 256;
 	so->maxMemory = Min(maxMemory, (double)SIZE_MAX);
 	/******** 填空结束 ********/
 
@@ -214,31 +216,20 @@ void hnswrescan(IndexScanDesc scan, ScanKey keys, int nkeys, ScanKey orderbys, i
 	 *    - orderbys非空且scan->numberOfOrderBys>0时，memmove(scan->orderByData, orderbys, ...)
 	 */
 	/******** 填空开始 ********/
-	/* 1. 重置基础扫描状态 */
 	so->first = true;
-	so->w = NIL;
+	/* v and discarded are allocated in tmpCtx */
+	so->v.tids = NULL;
 	so->discarded = NULL;
 	so->tuples = 0;
-	so->previousDistance = -get_float4_infinity();
+	so->previousDistance = -get_float8_infinity();
 
-	/* 2. 重置临时内存上下文 */
 	MemoryContextReset(so->tmpCtx);
 
-	/* 3. 拷贝扫描键 */
-	if (keys != NULL && scan->numberOfKeys > 0)
-	{
-		memmove(scan->keyData,
-				keys,
-				scan->numberOfKeys * sizeof(ScanKeyData));
-	}
+	if (keys && scan->numberOfKeys > 0)
+		memmove(scan->keyData, keys, scan->numberOfKeys * sizeof(ScanKeyData));
 
-	/* 4. 拷贝排序键（ORDER BY，用于向量距离） */
-	if (orderbys != NULL && scan->numberOfOrderBys > 0)
-	{
-		memmove(scan->orderByData,
-				orderbys,
-				scan->numberOfOrderBys * sizeof(ScanKeyData));
-	}
+	if (orderbys && scan->numberOfOrderBys > 0)
+		memmove(scan->orderByData, orderbys, scan->numberOfOrderBys * sizeof(ScanKeyData));
 	/******** 填空结束 ********/
 }
 
@@ -285,7 +276,6 @@ bool hnswgettuple(IndexScanDesc scan, ScanDirection dir)
 		HnswSearchCandidate *sc;
 		HnswElement element;
 		ItemPointer heaptid;
-		pairingheap_node *w_node;
 
 		if (list_length(so->w) == 0)
 		{
@@ -300,21 +290,40 @@ bool hnswgettuple(IndexScanDesc scan, ScanDirection dir)
 			/******** 填空开始 ********/
 			if (hnsw_iterative_scan == HNSW_ITERATIVE_SCAN_OFF)
 				break;
+
+			/* Empty index */
 			if (so->discarded == NULL)
 				break;
-			if (so->tuples >= hnsw_max_scan_tuples ||
-				(double)MemoryContextMemAllocated(so->tmpCtx, false) >= so->maxMemory)
+
+			/* Reached max number of tuples or memory limit */
+			if (so->tuples >= hnsw_max_scan_tuples || MemoryContextMemAllocated(so->tmpCtx, false) > so->maxMemory)
 			{
-				if (!pairingheap_is_empty(so->discarded))
-				{
-					w_node = pairingheap_remove_first(so->discarded);
-					sc = HnswGetSearchCandidate(w_node, w_node);
-					so->w = lappend(so->w, sc);
-				}
-				else
-				{
+				if (pairingheap_is_empty(so->discarded))
 					break;
-				}
+
+				/* Return remaining tuples */
+				so->w = lappend(so->w, HnswGetSearchCandidate(w_node, pairingheap_remove_first(so->discarded)));
+			}
+			else
+			{
+				/*
+				 * Locking ensures when neighbors are read, the elements they
+				 * reference will not be deleted (and replaced) during the
+				 * iteration.
+				 *
+				 * Elements loaded into memory on previous iterations may have
+				 * been deleted (and replaced), so when reading neighbors, the
+				 * element version must be checked.
+				 */
+				LockPage(scan->indexRelation, HNSW_SCAN_LOCK, ShareLock);
+
+				so->w = ResumeScanItems(scan);
+
+				UnlockPage(scan->indexRelation, HNSW_SCAN_LOCK, ShareLock);
+
+#if defined(HNSW_MEMORY)
+				ShowMemoryUsage(so);
+#endif
 			}
 			/******** 填空结束 ********/
 
@@ -360,8 +369,8 @@ bool hnswgettuple(IndexScanDesc scan, ScanDirection dir)
 		{
 			if (sc->distance < so->previousDistance)
 				continue;
-			else
-				so->previousDistance = sc->distance;
+
+			so->previousDistance = sc->distance;
 		}
 		/******** 填空结束 ********/
 
