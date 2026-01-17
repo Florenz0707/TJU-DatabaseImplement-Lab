@@ -3227,4 +3227,23 @@
   amoprighttype => 'point', amopstrategy => '7', amopopr => '@>(box,point)',
   amopmethod => 'brin' },
 
+
+-- 原有记录：补充 amoppurpose => 's'（搜索用途，明确标注，保持兼容性）
+{ amopfamily => 'hnsw/vector_l2_family', 
+  amoplefttype => 'vector',
+  amoprighttype => 'vector', 
+  amopstrategy => '1', 
+  amoppurpose => 's',
+  amopopr => '<->(vector,vector)',
+  amopmethod => 'hnsw' },
+
+-- 新增记录：amoppurpose => 'o'（排序用途，有序扫描必需，格式与原有完全一致）
+{ amopfamily => 'hnsw/vector_l2_family',
+  amoplefttype => 'vector',
+  amoprighttype => 'vector',
+  amopstrategy => '2',
+  amoppurpose => 'o',
+  amopopr => '<->(vector,vector)',
+  amopmethod => 'hnsw',
+  amopsortfamily => 'btree/float_ops' },
 ]

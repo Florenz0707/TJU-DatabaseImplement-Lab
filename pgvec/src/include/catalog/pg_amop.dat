@@ -3246,23 +3246,4 @@
   amopopr => '<->(vector,vector)',
   amopmethod => 'hnsw',
   amopsortfamily => 'btree/float_ops' },
-
-
-# hnsw
-{ amopfamily => 'hnsw/vector_l2_family',
-  amoplefttype => 'vector',
-  amoprighttype => 'vector',
-  amopstrategy => '1',
-  amoppurpose => 's',
-  amopopr => '<->(vector,vector)',
-  amopmethod => 'hnsw' },
-{ amopfamily => 'hnsw/vector_l2_family',
-  amoplefttype => 'vector',
-  amoprighttype => 'vector',
-  amopstrategy => '2',
-  amoppurpose => 'o',
-  amopopr => '<->(vector,vector)',
-  amopmethod => 'hnsw',
-  amopsortfamily => 'btree/float_ops' }
-
 ]

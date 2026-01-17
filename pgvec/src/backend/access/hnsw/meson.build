@@ -5,5 +5,6 @@ backend_sources += files(
   'hnswbuild.c',
   'hnswutils.c',
   'hnswinsert.c',
-  'hnswscan.c'
+  'hnswscan.c',
+  'hnswvacuum.c'
 )

@@ -303,8 +303,8 @@ hnswhandler(PG_FUNCTION_ARGS)
 #if PG_VERSION_NUM >= 170000
 	amroutine->aminsertcleanup = NULL;
 #endif
-	amroutine->ambulkdelete = NULL;
-	amroutine->amvacuumcleanup = NULL;
+	amroutine->ambulkdelete = hnswbulkdelete;
+	amroutine->amvacuumcleanup = hnswvacuumcleanup;
 	amroutine->amcanreturn = NULL;
 	amroutine->amcostestimate = hnswcostestimate;
 #if PG_VERSION_NUM >= 180000

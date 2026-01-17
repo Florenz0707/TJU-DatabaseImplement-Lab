@@ -2,13 +2,13 @@ echo "Activate python virtual env..."
 source ~/dbimpl/.venv/bin/activate
 
 echo "Meson setup ..."
-cd ~/dbimpl/pgvec
+cd ~/dbimpl/example
 uv run meson setup pgvecbuild --prefix=~/dbimpl/pgvecinstall
 deactivate
 read -p "Press enter to continue"
 
 echo "Ninja compiling ..."
-cd ~/dbimpl/pgvec/pgvecbuild
+cd ~/dbimpl/example/pgvecbuild
 ninja
 ninja install
 read -p "Press enter to continue"
@@ -23,4 +23,4 @@ echo "Initial Database"
 ~/dbimpl/pgvecinstall/bin/pg_ctl -D ~/dbimpl/pgvecinstall/data -l logfile start
 ~/dbimpl/pgvecinstall/bin/createdb test
 # ~/dbimpl/pgvecinstall/bin/psql test
-~/dbimpl/pgvec/pgvecbuild/src/test/regress/pg_regress --inputdir=/home/florenz/dbimpl/pgvec/src/test/regress   hnsw_regression
+~/dbimpl/example/pgvecbuild/src/test/regress/pg_regress --inputdir=/home/florenz/dbimpl/example/src/test/regress   hnsw_regression
