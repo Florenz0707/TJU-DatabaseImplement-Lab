@@ -21,4 +21,3 @@ echo "Initial Database"
 ~/dbimpl/pgvecinstall/bin/pg_ctl -D ~/dbimpl/pgvecinstall/data -l logfile start
 ~/dbimpl/pgvecinstall/bin/createdb test
 ~/dbimpl/pgvecinstall/bin/psql test
-
